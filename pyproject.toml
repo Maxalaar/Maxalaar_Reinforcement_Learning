@@ -1,0 +1,70 @@
+[project]
+name = "maxalaar-reinforcement-learning"
+version = "0.1.0"
+description = "Thin layer over Ray RLlib: experiment configurations, training, evaluation, export, environments"
+requires-python = ">=3.12"
+dependencies = [
+    # The Ray version decides whether patches/torch_learner_optimizer_state_restore.py still applies:
+    # check it after an upgrade (see README).
+    "ray[rllib,tune]==2.54.0",
+    "torch>=2.8",
+    "gymnasium>=1.0",
+    "numpy",
+    "pyyaml",
+    "psutil",
+    "dm-tree",
+    "einops",
+    "opencv-python",
+    "matplotlib",
+    "moviepy",
+    "pygame",
+    "wandb",
+    "GPUtil",
+    "requests",
+]
+
+[project.optional-dependencies]
+# pip install -e ".[export,box2d]" ... ; "all-environments" installs every environment below.
+export = ["onnx", "onnxscript", "onnxruntime", "pnnx", "ncnn"]
+box2d = ["Box2D"]                          # LunarLander, BipedalWalker, CarRacing
+mujoco = ["gymnasium[mujoco]"]             # Ant
+atari = ["ale-py"]
+flappy-bird = ["flappy-bird-gymnasium"]
+tetris = ["tetris-gymnasium"]
+mini-grid = ["minigrid"]
+vizdoom = ["vizdoom"]
+godot = ["godot-rl"]                       # Godot environments, Cubeball
+rocket-league = ["rlgym[all]"]
+all-environments = [
+    "maxalaar-reinforcement-learning[box2d,mujoco,atari,flappy-bird,tetris,mini-grid,vizdoom,godot,rocket-league]",
+]
+development = ["ruff", "basedpyright", "pytest"]
+
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.ruff]
+line-length = 120
+target-version = "py312"
+src = ["src"]
+
+[tool.ruff.lint]
+# Only real errors for now: the code comes from the thesis repository as is.
+select = ["E9", "F63", "F7", "F82"]
+
+[tool.ruff.lint.per-file-ignores]
+# Already broken in the thesis repository: LatentSpace2DVisualizer is defined nowhere.
+"src/maxalaar_reinforcement_learning/environments/slime_volley/play.py" = ["F821"]
+
+[tool.basedpyright]
+include = ["src", "scripts", "tests"]
+exclude = ["experiments", "temporary"]
+typeCheckingMode = "basic"
+pythonVersion = "3.13"
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]

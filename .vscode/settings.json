@@ -1,0 +1,13 @@
+{
+    "python.defaultInterpreterPath": "/media/SSD_1To/conda/envs/Maxalaar_Reinforcement_Learning/bin/python",
+    "python.terminal.activateEnvironment": true,
+    "python.languageServer": "None",
+    "[python]": {
+        "editor.defaultFormatter": "charliermarsh.ruff"
+    },
+    "editor.rulers": [120],
+    "python.testing.pytestEnabled": true,
+    "python.testing.pytestArgs": ["tests"],
+    "files.watcherExclude": {"**/experiments/**": true},
+    "search.exclude": {"experiments": true}
+}
