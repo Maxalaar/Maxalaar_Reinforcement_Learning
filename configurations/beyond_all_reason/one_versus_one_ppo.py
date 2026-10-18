@@ -1,10 +1,9 @@
 """PPO training configuration — 1v1 minimal combat (curriculum step 1).
 
-Map: flat 1024×1024-elmo arena (128×128 squares).
-Agent: 1 armpw (Pawn), shared policy.
-Opponent: 1 armpw, passive (does not move, does not shoot).
-Reward: +1 victory, -1 defeat, no intermediate shaping.
-Spawn: deterministic, agent at x≈0, opponent at x≈1.
+Scenario (beyond_all_reason_environment.scenarios.one_versus_one): flat 1024×1024-elmo arena, 1 armpw (Pawn)
+against 1 passive armpw (does not move, does not shoot), deterministic spawns at opposite edges.
+Chosen here, for this experiment: one weapon slot per unit, every command allowed, and a terminal reward
+(+1 victory, -1 defeat, no intermediate shaping). Entity counts follow the scenario (no ally, one enemy).
 
 Expected episode length: ~112 decisions (2 game-minutes at 32 frames/decision).
 Measured throughput: ~160 decisions/s per env runner at engine speed 1000.
@@ -18,7 +17,13 @@ from pathlib import Path
 
 import torch.nn as nn
 
-from beyond_all_reason_environment.scenarios.one_versus_one import CONFIGURATION
+from beyond_all_reason_environment.combat_configuration import (
+    ActionConfiguration,
+    CombatConfiguration,
+    ObservationConfiguration,
+    RewardWeights,
+)
+from beyond_all_reason_environment.scenarios import one_versus_one
 from maxalaar_reinforcement_learning.architectures.beyond_all_reason.beyond_all_reason_combat_rl_module import (
     BeyondAllReasonCombatRLModule,
 )
@@ -27,7 +32,14 @@ from maxalaar_reinforcement_learning.configuration.experimentation_configuration
 one_versus_one_ppo = ExperimentationConfiguration(
     experimentation_name="beyond_all_reason/one_versus_one_ppo",
     environment_name="BeyondAllReasonCombat",
-    environment_configuration={"configuration": CONFIGURATION},
+    environment_configuration={
+        "configuration": CombatConfiguration(
+            scenario=one_versus_one,
+            observation=ObservationConfiguration(maximum_weapons_per_unit=1),
+            action=ActionConfiguration(),
+            rewards=RewardWeights(damage_dealt=0.0, damage_received=0.0, kill=0.0, victory=1.0, defeat=-1.0),
+        )
+    },
 )
 
 # ── Architecture ──────────────────────────────────────────────────────────────
