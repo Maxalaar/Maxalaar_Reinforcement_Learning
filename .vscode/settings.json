@@ -9,5 +9,8 @@
     "python.testing.pytestEnabled": true,
     "python.testing.pytestArgs": ["tests"],
     "files.watcherExclude": {"**/experiments/**": true},
-    "search.exclude": {"experiments": true}
+    "search.exclude": {
+        "experiments": true
+    },
+    "python.analysis.typeCheckingMode": "off"
 }
