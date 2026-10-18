@@ -28,9 +28,9 @@ ENVIRONMENTS: dict[str, str] = {
     'ViZDoomRllib': 'maxalaar_reinforcement_learning.environments.vizdoom.vizdoom:ViZDoom',
     'GogotRllib': 'maxalaar_reinforcement_learning.environments.godot.godot:Gogot',
     'RocketLeague': 'maxalaar_reinforcement_learning.environments.rocket_league.rocket_league:RocketLeague',
-    'BeyondAllReasonCombat': 'maxalaar_reinforcement_learning.environments.beyond_all_reason.combat_multi_agent_environment:CombatMultiAgentEnvironment',
-    # Separate package, installed on its own.
+    # Separate packages, installed on their own.
     'Cubeball': 'cubeball:Cubeball',
+    'BeyondAllReasonCombat': 'beyond_all_reason_environment.combat_multi_agent_environment:CombatMultiAgentEnvironment',
 }
 
 
