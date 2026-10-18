@@ -30,7 +30,7 @@ ENVIRONMENTS: dict[str, str] = {
     'RocketLeague': 'maxalaar_reinforcement_learning.environments.rocket_league.rocket_league:RocketLeague',
     # Separate packages, installed on their own.
     'Cubeball': 'cubeball:Cubeball',
-    'BeyondAllReasonCombat': 'beyond_all_reason_environment.combat_multi_agent_environment:CombatMultiAgentEnvironment',
+    'BeyondAllReason': 'beyond_all_reason_environment.ray_multi_agent_environment:RayMultiAgentEnvironment',
 }
 
 

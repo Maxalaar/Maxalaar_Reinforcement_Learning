@@ -19,7 +19,7 @@ Architecture — one value per allyteam, using full-game state:
 
     For n_allyteams = 2: 8 tokens total.
 
-Observation key layout (produced by encode_observation in combat_environment.py):
+Observation key layout (produced by encode_observation in reinforcement_learning_environment.py):
     allyteam0_units_chassis   (1 + max_ally_units, n_chassis)  — self prepended at row 0
     allyteam0_unit_mask       (1 + max_ally_units,)
     allyteam0_units_state     (1 + max_ally_units, n_state)

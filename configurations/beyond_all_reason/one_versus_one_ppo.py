@@ -28,14 +28,14 @@ from beyond_all_reason_environment import (
     RewardWeights,
 )
 from beyond_all_reason_environment.scenarios import one_versus_one
-from maxalaar_reinforcement_learning.architectures.beyond_all_reason.beyond_all_reason_combat_rl_module import (
-    BeyondAllReasonCombatRLModule,
+from maxalaar_reinforcement_learning.architectures.beyond_all_reason.beyond_all_reason_module import (
+    BeyondAllReasonModule,
 )
 from maxalaar_reinforcement_learning.configuration.experimentation_configuration import ExperimentationConfiguration
 
 one_versus_one_ppo = ExperimentationConfiguration(
     experimentation_name="beyond_all_reason/one_versus_one_ppo",
-    environment_name="BeyondAllReasonCombat",
+    environment_name="BeyondAllReason",
     environment_configuration={
         "configuration": ReinforcementLearningEnvironmentConfiguration(
             game=GameConfiguration(scenario=one_versus_one, controllers=[Agent(), Passive()]),
@@ -47,7 +47,7 @@ one_versus_one_ppo = ExperimentationConfiguration(
 )
 
 # ── Architecture ──────────────────────────────────────────────────────────────
-one_versus_one_ppo.reinforcement_learning_configuration.architecture = BeyondAllReasonCombatRLModule
+one_versus_one_ppo.reinforcement_learning_configuration.architecture = BeyondAllReasonModule
 one_versus_one_ppo.reinforcement_learning_configuration.architecture_configuration = {
     # Actor
     "d_level1": 64,

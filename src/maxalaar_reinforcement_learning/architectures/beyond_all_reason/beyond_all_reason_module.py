@@ -113,7 +113,7 @@ _CATEGORY_KEYS: dict[str, tuple[str, str, str, str, str]] = {
 _CATEGORY_ORDER = ("ally_units", "enemy_units", "ally_buildings", "enemy_buildings")
 
 
-class BeyondAllReasonCombatRLModule(TorchRLModule, ValueFunctionAPI):
+class BeyondAllReasonModule(TorchRLModule, ValueFunctionAPI):
     @override(TorchRLModule)
     def get_inference_action_dist_cls(self) -> Type[TorchDistribution]:
         return Catalog._get_dist_cls_from_action_space(
