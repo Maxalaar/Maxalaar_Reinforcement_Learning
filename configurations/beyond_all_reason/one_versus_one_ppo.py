@@ -1,9 +1,10 @@
 """PPO training configuration — 1v1 minimal combat (curriculum step 1).
 
-Scenario (beyond_all_reason_environment.scenarios.one_versus_one): flat 1024×1024-elmo arena, 1 armpw (Pawn)
-against 1 passive armpw (does not move, does not shoot), deterministic spawns at opposite edges.
-Chosen here, for this experiment: one weapon slot per unit, every command allowed, and a terminal reward
-(+1 victory, -1 defeat, no intermediate shaping). Entity counts follow the scenario (no ally, one enemy).
+Scenario (beyond_all_reason_environment.scenarios.one_versus_one): flat 1024×1024-elmo arena, 1 armpw (Pawn) on
+each side, deterministic spawns at opposite edges.
+Chosen here, for this experiment: the agent against a Passive Pawn (does not move, does not shoot), one weapon slot
+per unit, every command allowed, and a terminal reward (+1 victory, -1 defeat, no intermediate shaping). Entity
+counts follow the scenario (no ally, one enemy).
 
 Expected episode length: ~112 decisions (2 game-minutes at 32 frames/decision).
 Measured throughput: ~160 decisions/s per env runner at engine speed 1000.
@@ -17,10 +18,13 @@ from pathlib import Path
 
 import torch.nn as nn
 
-from beyond_all_reason_environment.combat_configuration import (
+from beyond_all_reason_environment import (
     ActionConfiguration,
-    CombatConfiguration,
+    Agent,
+    GameConfiguration,
     ObservationConfiguration,
+    Passive,
+    ReinforcementLearningEnvironmentConfiguration,
     RewardWeights,
 )
 from beyond_all_reason_environment.scenarios import one_versus_one
@@ -33,8 +37,8 @@ one_versus_one_ppo = ExperimentationConfiguration(
     experimentation_name="beyond_all_reason/one_versus_one_ppo",
     environment_name="BeyondAllReasonCombat",
     environment_configuration={
-        "configuration": CombatConfiguration(
-            scenario=one_versus_one,
+        "configuration": ReinforcementLearningEnvironmentConfiguration(
+            game=GameConfiguration(scenario=one_versus_one, controllers=[Agent(), Passive()]),
             observation=ObservationConfiguration(maximum_weapons_per_unit=1),
             action=ActionConfiguration(),
             rewards=RewardWeights(damage_dealt=0.0, damage_received=0.0, kill=0.0, victory=1.0, defeat=-1.0),
