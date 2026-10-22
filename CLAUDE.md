@@ -20,6 +20,9 @@ Thin personal layer over Ray RLlib (configurations, training, evaluation, export
   `ray.init(runtime_env=...)`: the user chose to avoid per-actor setup cost. sitecustomize.py does not work with
   conda's Python 3.13, which ships one.
 - `ExperimentationConfiguration` only holds reinforcement learning fields; other projects subclass it.
+- Curriculum mode (training/curriculum_training.py, scripts/curriculum_training.py): stages are experimentation
+  configuration files, each until its stopping_criterion; the next starts from its final checkpoint (weights only).
+  State in experiments/<curriculum>/version_k/curriculum_state.json; running it again resumes (--new: a new run).
 - Next planned user: the Beyond All Reason environment
   (/media/SSD_1To/Programing_Projects/Python/Beyond_All_Reason_Reinforcement_Learning), as a MultiAgentEnv adapter here.
 

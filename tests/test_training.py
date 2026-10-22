@@ -130,8 +130,9 @@ def test_training_script_then_export(tmp_path: Path):
 
 @pytest.mark.parametrize("path", sorted((PROJECT_ROOT / "configurations").rglob("*.py")), ids=lambda path: path.stem)
 def test_experiment_configurations_load(path: Path):
+    from maxalaar_reinforcement_learning.configuration.curriculum_configuration import CurriculumConfiguration
     from maxalaar_reinforcement_learning.utilities.save.get_configuration_class import get_configuration_class
 
     if "cubeball" in path.parts:
         pytest.importorskip("cubeball")
-    assert isinstance(get_configuration_class(str(path)), ExperimentationConfiguration)
+    assert isinstance(get_configuration_class(str(path)), (ExperimentationConfiguration, CurriculumConfiguration))
