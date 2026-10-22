@@ -23,8 +23,11 @@ Thin personal layer over Ray RLlib (configurations, training, evaluation, export
 - Curriculum mode (training/curriculum_training.py, scripts/curriculum_training.py): stages are experimentation
   configuration files, each until its stopping_criterion; the next starts from its final checkpoint (weights only).
   State in experiments/<curriculum>/version_k/curriculum_state.json; running it again resumes (--new: a new run).
-- Next planned user: the Beyond All Reason environment
-  (/media/SSD_1To/Programing_Projects/Python/Beyond_All_Reason_Reinforcement_Learning), as a MultiAgentEnv adapter here.
+- No game-specific code here (the user's rule): a game's environment, network and experiments live in its own
+  repository, which names its environment by class path (environment_name "package.module.Class", registered by
+  environments/register_environments.register_environment). Example: Beyond All Reason, in
+  /media/SSD_1To/Programing_Projects/Python/Beyond_All_Reason_Reinforcement_Learning (package
+  beyond_all_reason_reinforcement_learning), trained from that repository root with the scripts of this one.
 
 ## Known issues / follow-ups
 - DensePPO + restore + evaluation on the local env runner: device mismatch (pre-existing with Ray 2.48); xfail test.
