@@ -7,7 +7,9 @@ Thin personal layer over Ray RLlib (configurations, training, evaluation, export
 ## Conventions
 - Discuss with the user in French. Names in full, no acronyms in file, folder and identifier names.
 - Conda environment `Maxalaar_Reinforcement_Learning` (Python 3.13, /media/SSD_1To/conda/envs/), `pip install -e .`;
-  `glib` installed by conda for OpenCV on NixOS. Ray pinned to 2.54.0 in pyproject.toml.
+  `glib` installed by conda for OpenCV on NixOS; conda variable `TORCH_DISABLE_NATIVE_JIT=1`
+  (torch 2.14 routes some GPU ops, such as 1×1 attention, to Triton kernels that need /sbin/ldconfig and a C compiler,
+  both absent on NixOS). Ray pinned to 2.54.0 in pyproject.toml.
 - Scripts run from the project root (paths like `experiments/` are relative to the working directory).
 - Configuration files define a variable named like the file (`get_configuration_class` relies on it).
 
