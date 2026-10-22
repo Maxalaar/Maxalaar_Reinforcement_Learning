@@ -7,6 +7,7 @@ from ray.rllib.algorithms.dqn import DQNConfig, DQN
 from ray.rllib.connectors.env_to_module import FlattenObservations
 from ray.rllib.utils.from_config import NotProvided
 from ray.rllib.algorithms import AlgorithmConfig, Algorithm
+from ray.rllib.core import DEFAULT_MODULE_ID
 from ray.rllib.core.rl_module.rl_module import RLModuleSpec
 from ray.rllib.core.rl_module.multi_rl_module import MultiRLModuleSpec
 
@@ -55,7 +56,8 @@ def build_algorithm_configuration(
         policy_spec_kwargs['model_config'] = reinforcement_learning_configuration.architecture_configuration
 
     if reinforcement_learning_configuration.initialization_checkpoint_path is not None:
-        rl_module_path = Path(reinforcement_learning_configuration.initialization_checkpoint_path) / 'learner_group' / 'learner' / 'rl_module'
+        # Absolute: RLlib reads it through pyarrow, which rejects relative paths.
+        rl_module_path = Path(reinforcement_learning_configuration.initialization_checkpoint_path).resolve() / 'learner_group' / 'learner' / 'rl_module'
         if not rl_module_path.exists():
             raise FileNotFoundError(f"Checkpoint not found: {rl_module_path}")
         if reinforcement_learning_configuration.is_multi_agents and reinforcement_learning_configuration.policies:
@@ -73,9 +75,12 @@ def build_algorithm_configuration(
                 rl_module_spec=MultiRLModuleSpec(rl_module_specs=per_policy_specs),
             )
         else:
-            # Single-agent: load directly from rl_module
+            # Single-agent: the weights are in the default module's subfolder (rl_module/ itself holds an empty state)
+            module_checkpoint_path = rl_module_path / DEFAULT_MODULE_ID
+            if not module_checkpoint_path.exists():
+                raise FileNotFoundError(f"Module checkpoint not found: {module_checkpoint_path}")
             algorithm_configuration.rl_module(
-                rl_module_spec=RLModuleSpec(**policy_spec_kwargs, load_state_path=str(rl_module_path)),
+                rl_module_spec=RLModuleSpec(**policy_spec_kwargs, load_state_path=str(module_checkpoint_path)),
             )
     elif policy_spec_kwargs:
         algorithm_configuration.rl_module(
