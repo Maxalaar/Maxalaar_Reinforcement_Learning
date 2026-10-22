@@ -3,7 +3,9 @@
 experiments/<curriculum name>/version_<k>/
     curriculum_state.json   status of each stage (pending, running, completed), its training and final checkpoint
     curriculum.log          one line per event
-    stage_<i>_<configuration file name>/reinforcement_learning/...   the usual training directories of the stage
+    stage_<number>_<configuration file name>/reinforcement_learning/...   the usual training directories of the stage
+
+Stages are numbered from 1, in the order of CurriculumConfiguration.stages.
 """
 
 import json
@@ -45,25 +47,26 @@ def curriculum_training(curriculum_configuration: CurriculumConfiguration, new: 
     _log(version_path, f'curriculum {curriculum_configuration.curriculum_name}, {version_path.name}')
 
     for index, (stage_file, stage) in enumerate(zip(curriculum_configuration.stages, stages)):
+        number = index + 1
         stage_state = state['stages'][index]
         if stage_state['status'] == 'completed':
             continue
 
         previous_checkpoint = Path(state['stages'][index - 1]['final_checkpoint_path']) if index > 0 else None
-        _prepare_stage(stage, version_path / f'stage_{index}_{stage_file.stem}', curriculum_configuration, previous_checkpoint)
+        _prepare_stage(stage, version_path / f'stage_{number}_{stage_file.stem}', curriculum_configuration, previous_checkpoint)
 
         initialize_ray(stage)
         try:
             register_environments()
             training_path = Path(stage_state['training_path']) if stage_state['training_path'] else None
             if training_path is not None and (training_path / 'tuner.pkl').exists():
-                _log(version_path, f'stage {index} ({stage_file}): resumed from {training_path}')
+                _log(version_path, f'stage {number} ({stage_file}): resumed from {training_path}')
                 outcome = resume_training(stage, training_path)
             else:
                 training_path = create_training_version(stage)
                 stage_state.update(status='running', training_path=str(training_path), started=_now())
                 _save_state(version_path, state)
-                _log(version_path, f'stage {index} ({stage_file}): started in {training_path}'
+                _log(version_path, f'stage {number} ({stage_file}): started in {training_path}'
                      + (f', from {previous_checkpoint}' if previous_checkpoint else ''))
                 outcome = start_training(stage, training_path)
         finally:
@@ -71,13 +74,13 @@ def curriculum_training(curriculum_configuration: CurriculumConfiguration, new: 
 
         criterion = stage.reinforcement_learning_configuration.stopping_criterion
         if not _stage_completed(criterion, outcome):
-            _log(version_path, f'stage {index} ({stage_file}): ended without reaching {criterion}'
+            _log(version_path, f'stage {number} ({stage_file}): ended without reaching {criterion}'
                  + (f' ({outcome.error!r})' if outcome.error else '') + '; training the curriculum again resumes it')
             return False
 
         stage_state.update(status='completed', final_checkpoint_path=str(outcome.last_checkpoint_path), completed=_now())
         _save_state(version_path, state)
-        _log(version_path, f'stage {index} ({stage_file}): completed, final checkpoint {outcome.last_checkpoint_path}')
+        _log(version_path, f'stage {number} ({stage_file}): completed, final checkpoint {outcome.last_checkpoint_path}')
 
     _log(version_path, 'curriculum completed')
     return True

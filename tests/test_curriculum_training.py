@@ -91,7 +91,7 @@ def test_an_interrupted_stage_resumes_where_it_stopped(tmp_path: Path):
     # Interrupted (Ctrl+C) once the second stage has a checkpoint.
     process = subprocess.Popen(command, cwd=tmp_path, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
     deadline = time.time() + 300
-    while not list(version_path.glob("stage_1_second_stage/**/checkpoint_*")):
+    while not list(version_path.glob("stage_2_second_stage/**/checkpoint_*")):
         assert process.poll() is None and time.time() < deadline, "the second stage wrote no checkpoint"
         time.sleep(1)
     process.send_signal(signal.SIGINT)
@@ -102,8 +102,8 @@ def test_an_interrupted_stage_resumes_where_it_stopped(tmp_path: Path):
     resumed = subprocess.run(command, cwd=tmp_path, capture_output=True, text=True, timeout=600)
     assert resumed.returncode == 0, resumed.stderr[-3000:]
     log = (version_path / "curriculum.log").read_text()
-    assert log.count("stage 0 (first_stage.py): started") == 1
-    assert "stage 1 (second_stage.py): resumed" in log
+    assert log.count("stage 1 (first_stage.py): started") == 1
+    assert "stage 2 (second_stage.py): resumed" in log
     state = json.loads((version_path / "curriculum_state.json").read_text())
     assert [stage["status"] for stage in state["stages"]] == ["completed", "completed"]
 
