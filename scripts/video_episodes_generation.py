@@ -5,7 +5,7 @@ import warnings
 from ray.rllib.algorithms import Algorithm, AlgorithmConfig
 
 from maxalaar_reinforcement_learning.configuration.experimentation_configuration import ExperimentationConfiguration
-from maxalaar_reinforcement_learning.environments.register_environments import register_environments
+from maxalaar_reinforcement_learning.environments.register_environments import register_environment, register_environments
 from maxalaar_reinforcement_learning.checkpoints.find_best_checkpoint_path import find_best_reinforcement_learning_checkpoint_path
 from maxalaar_reinforcement_learning.checkpoints.get_checkpoint_algorithm_configuration import get_checkpoint_algorithm_configuration
 from maxalaar_reinforcement_learning.environments.register_video_environment_creator import register_video_environment_creator
@@ -26,6 +26,7 @@ def video_episode_generation(experimentation_configuration: ExperimentationConfi
     algorithm_configuration.env_config.update(experimentation_configuration.video_episodes_generation_configuration.environment_configuration)
 
     reinforcement_learning_name = get_reinforcement_learning_name(experimentation_configuration, reinforcement_learning_path)
+    register_environment(algorithm_configuration.env)  # a class path name is not among the registered ones
     video_environment_name = register_video_environment_creator(
         environment_name=algorithm_configuration.env,
         video_episodes_storage_path=experimentation_configuration.video_episodes_storage_path / reinforcement_learning_name,

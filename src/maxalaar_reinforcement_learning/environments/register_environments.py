@@ -4,6 +4,9 @@ Each name points to "module:attribute" and the module is only imported when an e
 so an environment whose optional dependencies are not installed (VizDoom, Rocket League, Godot...) does not
 prevent the others from working. Install them with the extras of pyproject.toml, for example
 `pip install -e ".[vizdoom]"`.
+
+An environment of another package needs no entry: its class path ("package.module.Class") is a valid name, registered
+by register_environment when an algorithm is built (build_algorithm_configuration) or a checkpoint is watched.
 """
 
 import importlib
@@ -35,8 +38,13 @@ ENVIRONMENTS: dict[str, str] = {
 
 
 def load_environment_creator(name: str) -> Callable:
-    """The class or function that creates the environment registered under ``name``."""
-    module_name, attribute = ENVIRONMENTS[name].split(':')
+    """The class or function that creates the environment named ``name``: an entry of ENVIRONMENTS, or a class path."""
+    if name in ENVIRONMENTS:
+        module_name, attribute = ENVIRONMENTS[name].split(':')
+    else:
+        module_name, _, attribute = name.rpartition('.')
+        if not module_name:
+            raise ValueError(f"Unknown environment {name!r}: neither an entry of ENVIRONMENTS nor a class path.")
     return getattr(importlib.import_module(module_name), attribute)
 
 
@@ -47,6 +55,11 @@ def _lazy_creator(name: str) -> Callable:
     return create
 
 
+def register_environment(name: str):
+    """Register ``name`` (an entry of ENVIRONMENTS or a class path) in Ray; its module is imported lazily."""
+    register_env(name=name, env_creator=_lazy_creator(name))
+
+
 def register_environments():
     for name in ENVIRONMENTS:
-        register_env(name=name, env_creator=_lazy_creator(name))
+        register_environment(name)

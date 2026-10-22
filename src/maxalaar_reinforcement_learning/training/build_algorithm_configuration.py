@@ -12,6 +12,7 @@ from ray.rllib.core.rl_module.rl_module import RLModuleSpec
 from ray.rllib.core.rl_module.multi_rl_module import MultiRLModuleSpec
 
 from maxalaar_reinforcement_learning.configuration.experimentation_configuration import ExperimentationConfiguration
+from maxalaar_reinforcement_learning.environments.register_environments import register_environment
 
 
 def build_algorithm_configuration(
@@ -40,7 +41,8 @@ def build_algorithm_configuration(
 
     algorithm_configuration.framework(reinforcement_learning_configuration.framework)
 
-    # Environment
+    # Environment (a class path name needs registering: RLlib's multi-agent env runners do not resolve it)
+    register_environment(experimentation_configuration.environment_name)
     algorithm_configuration.environment(
         env=experimentation_configuration.environment_name,
         env_config=experimentation_configuration.environment_configuration,

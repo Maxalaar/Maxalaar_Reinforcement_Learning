@@ -7,7 +7,7 @@ import ray
 from ray.rllib.algorithms import Algorithm, AlgorithmConfig
 
 from maxalaar_reinforcement_learning.configuration.experimentation_configuration import ExperimentationConfiguration
-from maxalaar_reinforcement_learning.environments.register_environments import register_environments
+from maxalaar_reinforcement_learning.environments.register_environments import register_environment, register_environments
 from maxalaar_reinforcement_learning.checkpoints.find_best_checkpoint_path import find_best_reinforcement_learning_checkpoint_path
 from maxalaar_reinforcement_learning.checkpoints.get_checkpoint_algorithm_configuration import get_checkpoint_algorithm_configuration
 from maxalaar_reinforcement_learning.environments.register_human_rendering_environment_creator import register_human_rendering_environment_creator
@@ -51,6 +51,7 @@ def display_episodes_with_human_rendering(
     )
     algorithm_configuration = get_checkpoint_algorithm_configuration(best_checkpoints_path)
 
+    register_environment(algorithm_configuration.env)  # a class path name is not among the registered ones
     human_rendering_environment_name = register_human_rendering_environment_creator(
         environment_name=algorithm_configuration.env,
     )
