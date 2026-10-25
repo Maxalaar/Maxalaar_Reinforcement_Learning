@@ -19,6 +19,7 @@ def initialize_ray(experimentation_configuration: ExperimentationConfiguration, 
     ray.init(
         local_mode=experimentation_configuration.ray_local_mode if local_mode is None else local_mode,
         _temp_dir=experimentation_configuration.ray_temporary_directory,
+        object_store_memory=experimentation_configuration.ray_object_store_memory,
         _node_ip_address='127.0.0.1' if experimentation_configuration.ray_bind_to_localhost else None,
         _system_config=system_config,
         runtime_env={'env_vars': experimentation_configuration.ray_environment_variables},

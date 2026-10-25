@@ -47,6 +47,10 @@ class ReinforcementLearningConfiguration:
         self.is_multi_agents: bool = False
         self.policies: Optional[Set[str]] = None
         self.policy_mapping_function: Optional[Callable] = None
+        # What train_batch_size and rollout_fragment_length count: 'env_steps' (RLlib's default) or 'agent_steps'.
+        # With a number of agents that varies (agents that die), only 'agent_steps' with batch_mode
+        # 'truncate_episodes' gives batches of a fixed size (to a step of every agent per env runner).
+        self.count_steps_by: str | _NotProvided = NotProvided
 
         # DQN only
         self.tau: float | _NotProvided = NotProvided

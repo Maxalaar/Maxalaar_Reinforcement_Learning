@@ -94,6 +94,7 @@ def build_algorithm_configuration(
         algorithm_configuration.multi_agent(
             policies=reinforcement_learning_configuration.policies,
             policy_mapping_fn=reinforcement_learning_configuration.policy_mapping_function,
+            count_steps_by=reinforcement_learning_configuration.count_steps_by,
         )
 
     # Training

@@ -33,6 +33,8 @@ class ExperimentationConfiguration:
         # ln -s /mnt/873a422e-1bf1-4c0b-b123-e47e6872b379/tmp/ray ~/ray_my_link
         self.ray_temporary_directory: Optional[Path | str] = None
         self.ray_bind_to_localhost: bool = True
+        # Size of Ray's object store (bytes, in /dev/shm); None: Ray's default, 30 % of the RAM. It grows up to it.
+        self.ray_object_store_memory: Optional[int] = None
         self.ray_health_check_period_ms: int = 5000
         self.ray_health_check_failure_threshold: int = 60
         self.ray_environment_variables: dict = {
