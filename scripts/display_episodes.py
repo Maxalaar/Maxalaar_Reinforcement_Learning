@@ -1,4 +1,5 @@
 import argparse
+import json
 import os
 from pathlib import Path
 import warnings
@@ -160,9 +161,22 @@ if __name__ == '__main__':
         help="The path of repository with the reinforcement learning checkpoint (e.g., './experiments/cartpole/reinforcement_learning/base')"
     )
 
+    parser.add_argument(
+        '--environment_configuration',
+        type=json.loads,
+        default={},
+        help="""Entries added to the environment's env_config for this display, as JSON (e.g., '{"game_speed": 4}')"""
+    )
+
 
     arguments = parser.parse_args()
     experimentation_configuration = get_configuration_class(arguments.experimentation_configuration_file)
+    display_episodes_configuration = experimentation_configuration.display_episodes_configuration
+    # A new dictionary: DisplayEpisodesConfiguration's default is shared by every instance.
+    display_episodes_configuration.environment_configuration = {
+        **display_episodes_configuration.environment_configuration,
+        **arguments.environment_configuration,
+    }
 
     reinforcement_learning_path = Path(arguments.reinforcement_learning_path)
     if not reinforcement_learning_path.is_absolute():
