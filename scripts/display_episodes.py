@@ -77,12 +77,14 @@ def display_episodes_with_human_rendering(
 
     evaluation_env_config = {
         'render_mode': display_episodes_configuration.render_mode,
+        # For the environments that name what they save after the experimentation (videos...).
+        'experimentation_name': experimentation_configuration.experimentation_name,
     }
     evaluation_env_config.update(display_episodes_configuration.environment_configuration)
 
     algorithm_configuration.evaluation(
         evaluation_num_env_runners=1,
-        evaluation_duration=1000,
+        evaluation_duration=display_episodes_configuration.number_of_episodes,
         evaluation_parallel_to_training=False,
         evaluation_duration_unit='episodes',
         evaluation_sample_timeout_s=60*60,
@@ -169,6 +171,13 @@ if __name__ == '__main__':
     )
 
 
+    parser.add_argument(
+        '--episodes',
+        type=int,
+        default=None,
+        help="Episodes played before the display ends (default: the configuration's display_episodes_configuration.number_of_episodes)"
+    )
+
     arguments = parser.parse_args()
     experimentation_configuration = get_configuration_class(arguments.experimentation_configuration_file)
     display_episodes_configuration = experimentation_configuration.display_episodes_configuration
@@ -177,6 +186,9 @@ if __name__ == '__main__':
         **display_episodes_configuration.environment_configuration,
         **arguments.environment_configuration,
     }
+
+    if arguments.episodes is not None:
+        display_episodes_configuration.number_of_episodes = arguments.episodes
 
     reinforcement_learning_path = Path(arguments.reinforcement_learning_path)
     if not reinforcement_learning_path.is_absolute():

@@ -7,6 +7,8 @@ class DisplayEpisodesConfiguration:
     working_directory: Optional[Path] = None
     render_mode: str = 'rgb_array'
     explore: bool = False
+    # Episodes played before the display ends (the window closes with the environment).
+    number_of_episodes: int = 1000
     use_neural_network_visualizer: bool = False
     max_connections_per_layer = 30
     policies_name: List[str] = []
