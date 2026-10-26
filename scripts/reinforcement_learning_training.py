@@ -1,4 +1,5 @@
 import argparse
+from pathlib import Path
 
 from maxalaar_reinforcement_learning.configuration.experimentation_configuration import ExperimentationConfiguration
 from maxalaar_reinforcement_learning.environments.register_environments import register_environments
@@ -23,7 +24,20 @@ if __name__ == '__main__':
         help="The path of the experimentation configuration file (e.g., './configurations/experimentation/cartpole.py')"
     )
 
+    parser.add_argument(
+        '--initialization_checkpoint_path',
+        type=str,
+        default=None,
+        help="A checkpoint whose module weights start the training, instead of the configuration's "
+             "initialization_checkpoint_path (e.g., './experiments/cartpole/reinforcement_learning/base/version_0/PPO_.../checkpoint_000010'); "
+             "recorded in the version's reinforcement_learning_configuration.yaml"
+    )
+
     arguments = parser.parse_args()
     configuration_class = get_configuration_class(arguments.experimentation_configuration_file)
+    if arguments.initialization_checkpoint_path is not None:
+        configuration_class.reinforcement_learning_configuration.initialization_checkpoint_path = Path(
+            arguments.initialization_checkpoint_path
+        )
 
     reinforcement_learning_training(configuration_class)
