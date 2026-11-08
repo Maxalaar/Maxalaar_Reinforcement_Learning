@@ -103,6 +103,7 @@ def test_training_script_then_export(tmp_path: Path):
             configuration = ExperimentationConfiguration(experimentation_name='script_test', environment_name='CartPoleRllib')
         """)
         + SMALL_SETTINGS
+        + "configuration.reinforcement_learning_configuration.export_policies_at_checkpoint = True\n"
         + "script_test = configuration\n"
     )
 
@@ -115,6 +116,9 @@ def test_training_script_then_export(tmp_path: Path):
     assert training.returncode == 0, training.stderr[-3000:]
     checkpoints = list((tmp_path / "experiments" / "script_test").rglob("checkpoint_*"))
     assert checkpoints, "the training wrote no checkpoint"
+    # Each checkpoint has its policy exported beside it, during the training (export_policies_at_checkpoint).
+    unexported = [path for path in checkpoints if not (path / "policies" / "default_policy" / "policy.onnx").is_file()]
+    assert not unexported, f"checkpoints without their exported policy: {unexported}"
 
     export = run_script(
         "export_reinforcement_learning_module.py",

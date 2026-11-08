@@ -29,6 +29,14 @@ Thin personal layer over Ray RLlib (configurations, training, evaluation, export
   /media/SSD_1To/Programing_Projects/Python/Beyond_All_Reason_Reinforcement_Learning (package
   beyond_all_reason_reinforcement_learning), trained from that repository root with the scripts of this one.
 
+- Exported policies (decided with the user, 2026-11-08; export/policy_export.py): an RLlib checkpoint loads only while
+  its module class exists under the same import path. With export_policies_at_checkpoint (False by default: it needs
+  the "export" extra), each checkpoint gets <checkpoint>/policies/<policy>/policy.onnx (observation leaves ->
+  ACTION_DIST_INPUTS, from forward_inference) and policy.json (inputs, spaces, environment configuration, module class,
+  commits), playable without the code. Only new trainings: a resumed one keeps the callbacks it started with;
+  scripts/export_policies.py exports existing checkpoints. The thesis export (forward_onnx, deterministic action) stays.
+  An architecture to export must not branch on the data (`if mask.any():` breaks torch.export).
+
 ## Known issues / follow-ups
 - DensePPO + restore + evaluation on the local env runner: device mismatch (pre-existing with Ray 2.48); xfail test.
 - Machine profiles (resources separate from experiments) not done yet; only cart_pole and cubeball configurations

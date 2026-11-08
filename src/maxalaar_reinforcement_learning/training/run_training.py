@@ -91,6 +91,11 @@ def _run_configuration(experimentation_configuration: ExperimentationConfigurati
                 log_config=True,
             )
         )
+    if reinforcement_learning_configuration.export_policies_at_checkpoint:
+        # Imported here: the export needs the "export" extra (onnx, onnxscript, onnxruntime).
+        from maxalaar_reinforcement_learning.export.policy_export import PolicyExportCallback
+
+        callbacks.append(PolicyExportCallback(experimentation_configuration.environment_configuration))
 
     return RunConfig(
         name=version_path.name,

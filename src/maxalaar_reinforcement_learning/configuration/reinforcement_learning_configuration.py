@@ -116,6 +116,10 @@ class ReinforcementLearningConfiguration:
         self.checkpoint_score_order: str = 'max'
         self.checkpoint_frequency: int = 50
         self.checkpoint_at_end: Optional[bool] = None
+        # Each checkpoint also gets its policies exported to ONNX, playable without their code
+        # (export/policy_export.py; needs the "export" extra). Only for a new training: a resumed one keeps the
+        # callbacks it started with.
+        self.export_policies_at_checkpoint: bool = False
 
     def to_yaml_file(self, directory: Path):
         directory.mkdir(parents=True, exist_ok=True)
